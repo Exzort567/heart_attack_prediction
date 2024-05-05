@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $predicted_value = ($prediction === "More chance of heart attack") ? 1 : 0;
 
     // Update the table with the prediction result
-    $update_sql = "UPDATE heart_attack SET output = '$predicted_value' ORDER BY user_id DESC LIMIT 1"; // Assuming you want to update the latest entry
+    $update_sql = "UPDATE heart_attack SET output = '$predicted_value' ORDER BY user_id DESC LIMIT 1"; 
     if (mysqli_query($conn, $update_sql)) {
         echo '<script> alert("Prediction: ' . $prediction . '")</script>';
     } else {
