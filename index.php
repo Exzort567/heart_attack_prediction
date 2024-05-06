@@ -6,11 +6,11 @@ include 'connection.php';
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     // If logged in, get the user's name and position from session variables
     $userName = $_SESSION["username"];
-    $userType = $_SESSION["type"]; // Assuming "type" is the session variable for the user's position
+   
 } else {
     // If not logged in, set default values or redirect to login page
     $userName = "Guest";
-    $userType = "Guest"; // or set to appropriate default value
+   
 }
 
 // Fetch count of male individuals
@@ -71,6 +71,11 @@ if (mysqli_num_rows($result) > 0) {
         $averageThalachhData[] = $row["avg_thalachh"];
     }
 }
+$modifiedLabels = [];
+foreach ($ageData as $index => $ageRange) {
+ // Combine age range and average thalachh value
+    $modifiedLabels[] = 'Age: ' . $ageRange . ', Avg Thalachh: ' . $averageThalachhData[$index];
+}
 ?>
 
 <!DOCTYPE html>
@@ -116,24 +121,6 @@ if (mysqli_num_rows($result) > 0) {
             </div>
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <h5 class="text-muted fw-normal mt-0 text-truncate" title="Sex">Sex</h5>
-                                    <h3 class="my-2 py-1"><?php echo $maleCount; ?></h3>
-                                    <p class="mb-0 text-muted">Male</p>
-                                    <h3 class="my-2 py-1"><?php echo $femaleCount; ?></h3>
-                                    <p class="mb-0 text-muted">Female</p>
-                                </div> <!-- end col -->
-                                    
-                            </div> <!-- end row-->
-                        </div> <!-- end card-body -->
-                    </div> <!-- end card -->
-                </div> <!-- end col -->
-            </div> <!-- end row -->
 
                 <!-- Repeat the above structure for other cards -->
 
@@ -146,7 +133,7 @@ if (mysqli_num_rows($result) > 0) {
                         <div class="card-body">
                             <h4 class="header-title mb-4">Line Chart</h4>
                             <div dir="ltr">
-                                <div class="mt-3 chartjs-chart" style="height: 400px;">
+                                <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
                                     <canvas id="line-chart-example" data-colors="#727cf5,#0acf97"></canvas>
                                 </div>
@@ -160,7 +147,7 @@ if (mysqli_num_rows($result) > 0) {
                         <div class="card-body">
                             <h4 class="header-title mb-4">Bar Chart</h4>
                             <div dir="ltr">
-                                <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
+                                    <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
                                     <canvas id="bar-chart-example" data-colors="#fa5c7c,#727cf5"></canvas>
                                 </div>
@@ -168,15 +155,64 @@ if (mysqli_num_rows($result) > 0) {
                         </div> <!-- end card body-->
                     </div> <!-- end card -->
                 </div><!-- end col-->
+                
             </div>
             <!-- end row-->
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title mb-4">Donut Chart</h4>
+                            <div dir="ltr">
+                                <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
+                                    <!-- Canvas for the chart -->
+                                    <canvas id="donut-chart-example"></canvas>
+                                </div>
+                            </div>
+                        </div> <!-- end card body-->
+                    </div> <!-- end card -->
+                </div><!-- end col-->
+
+                <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title mb-4">Step Chart</h4>
+                            <div dir="ltr">
+                                    <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
+                                    <!-- Canvas for the chart -->
+                                    <canvas id="step-chart-example" data-colors="#fa5c7c,#727cf5"></canvas>
+                                </div>
+                            </div>
+                        </div> <!-- end card body-->
+                    </div> <!-- end card -->
+                </div><!-- end col-->
+                
+            </div>
+            <!-- end row-->
+            <div class="row">
+            <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title mb-4">Bubble Chart</h4>
+                            <div dir="ltr">
+                                    <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
+                                    <!-- Canvas for the chart -->
+                                    <canvas id="bubble-chart-example" data-colors="#fa5c7c,#727cf5"></canvas>
+                                </div>
+                            </div>
+                        </div> <!-- end card body-->
+                    </div> <!-- end card -->
+                </div><!-- end col-->
+            </div>
         </div> <!-- container -->
+        
     </div> <!-- content -->
     <!-- ============================================================== -->
     <!-- End Page content -->
     <!-- ============================================================== -->
     </div>
     <!-- END wrapper -->
+    
 
     <!-- Right Sidebar -->
     <div class="end-bar">
@@ -346,6 +382,127 @@ if (mysqli_num_rows($result) > 0) {
                             title: {
                                 display: true,
                                 text: 'Gender'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+       // JavaScript to render the donut chart
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctxDonut = document.getElementById('donut-chart-example').getContext('2d');
+            
+            var myDonutChart = new Chart(ctxDonut, {
+                
+                type: 'doughnut',
+                data: {
+                    // Labels for different categories (e.g., Age groups)
+                    labels: <?php echo json_encode($modifiedLabels); ?>,
+                    datasets: [{
+                        label: 'Donut Chart',
+                        // Data for each category (e.g., Average thalachh for each age group)
+                        data: <?php echo json_encode($averageThalachhData); ?>,
+                        backgroundColor: [
+                            // Specify different colors for each category as needed
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(153, 102, 255, 0.5)',
+                            'rgba(255, 159, 64, 0.5)'
+                        ],
+                        borderColor: [
+                            // Specify border colors corresponding to the background colors
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    cutout: '70%', // Adjust the size of the hole in the center of the doughnut
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Donut'
+                        }
+                    }
+                }
+            });
+        });
+
+
+
+        // JavaScript to render the bubble chart
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctxBubble = document.getElementById('bubble-chart-example').getContext('2d');
+            var myBubbleChart = new Chart(ctxBubble, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Bubble Chart',
+                        data: [
+                            {x: <?php echo $avg_male[0]; ?>, y: <?php echo $avg_female[0]; ?>, r: 10},
+                            // Add more data points as needed
+                        ],
+                        backgroundColor: 'rgba(114, 124, 245, 0.2)', // Fill color for bubbles
+                        borderColor: 'rgba(114, 124, 245, 1)', // Border color for bubbles
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Average trtbps (Male)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Average trtbps (Female)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // JavaScript to render the step chart
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctxStep = document.getElementById('step-chart-example').getContext('2d');
+            var myStepChart = new Chart(ctxStep, {
+                type: 'line',
+                data: {
+                    // Labels for X-axis (Gender)
+                    labels: ['Male', 'Female'],
+                    datasets: [{
+                        label: 'Average Resting Blood Pressure (trtbps)',
+                        // Data for Y-axis (Resting Blood Pressure)
+                        data: [<?php echo $avg_male[0]; ?>, <?php echo $avg_female[0]; ?>],
+                        fill: false,
+                        borderColor: 'rgba(114, 124, 245, 1)', // Color for the line
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Gender'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Average Resting Blood Pressure (trtbps)'
                             }
                         }
                     }
