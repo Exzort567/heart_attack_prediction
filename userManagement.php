@@ -47,11 +47,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     // If logged in, get the user's name and position from session variables
     $userName = $_SESSION["username"];
-    $userType = $_SESSION["type"]; // Assuming "type" is the session variable for the user's position
 } else {
     // If not logged in, set default values or redirect to login page
     $userName = "Guest";
-    $userType = "Guest"; // or set to appropriate default value
+
 }
 
 $sql = "SELECT user_id, lname, fname, mname, username, type FROM user";
