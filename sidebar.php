@@ -70,21 +70,10 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
                     </li>
         
                     <li class="side-nav-item">
-                        <a data-bs-toggle="collapse" href="#sidebarCrm" aria-expanded="false" aria-controls="sidebarCrm" class="side-nav-link">
+                        <a href="userManagement.php"  class="side-nav-link">
                             <i class="uil uil-tachometer-fast"></i>
-        
-                            <span>Management</span>
-                            <span class="menu-arrow"></span>
+                            <span>User's Management</span>
                         </a>
-                        <div class="collapse" id="sidebarCrm">
-                            <ul class="side-nav-second-level">
-        
-                                <li>
-                                    <a href="userManagement.php">User's Management</a>
-                                </li>
-        
-                            </ul>
-                        </div>
                     </li>
         
                     <li class="side-nav-item">
