@@ -95,78 +95,74 @@ mysqli_close($conn);
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="header-title">Result table</h4>
+                                        <h4 class="header-title">Results</h4>
                                         <p class="text-muted font-14">
                                             The result table provides information on various columns including the patient's age, sex, presence of exercise-induced angina, number of major vessels, type of chest pain, resting blood pressure, cholesterol level fetched via BMI sensor, fasting blood sugar status, resting electrocardiographic results, maximum heart rate achieved, and the target indicating the likelihood of a heart attack.
                                         </p>
 
                                         <ul class="nav nav-tabs nav-bordered mb-3">
                                             <li class="nav-item">
-                                                <a href="#scroll-vertical-preview" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
+                                                <a href="#responsive-preview" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
                                                     Preview
                                                 </a>
                                             </li>
                                         </ul> <!-- end nav-->
                                         <div class="tab-content">
-                                            <div class="tab-pane show active" id="scroll-vertical-preview">
-                                                <table id="scroll-vertical-datatable" class="table table-striped dt-responsive nowrap w-100">
-                                                    <thead>
-                                                        <tr>
-                                                        <th>Age</th>
-                                                        <th>Sex</th>
-                                                        <th>trtbps</th>
-                                                        <th>cp</th>
-                                                        <th>chol</th>
-                                                        <th>fbs</th>
-                                                        <th>restecg</th>
-                                                        <th>thalachh</th>
-                                                        <th>exng</th>
-                                                        <th>oldpeak</th>
-                                                        <th>slp</th>
-                                                        <th>caa</th>
-                                                        <th>thall</th>
-                                                        <th>output</th>
-                                                        </tr>
-                                                    </thead>
-                                                
-                                                
-                                                    <tbody>
-                                                        <?php
-                                                            // Iterate over the fetched user data and populate table rows
-                                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                                echo "<tr>";
-                                                                echo "<td>{$row['age']}</td>";
-                                                                echo "<td>{$row['sex']}</td>";
-                                                                echo "<td>{$row['trtbps']}</td>";
-                                                                echo "<td>{$row['cp']}</td>";
-                                                                echo "<td>{$row['chol']}</td>";
-                                                                echo "<td>{$row['fbs']}</td>";
-                                                                echo "<td>{$row['restecg']}</td>";
-                                                                echo "<td>{$row['thalachh']}</td>";
-                                                                echo "<td>{$row['exng']}</td>";
-                                                                echo "<td>{$row['oldpeak']}</td>";
-                                                                echo "<td>{$row['slp']}</td>";
-                                                                echo "<td>{$row['caa']}</td>";
-                                                                echo "<td>{$row['thall']}</td>";
-                                                                echo "<td>{$row['output']}</td>";
-                                                                echo "<td>";
-                                                            
-                                                                echo "</td>";
-                                                                echo "</tr>";
-                                                            }
-                                                        ?>
-                                                        
-                                                    </tbody>
-                                                </table>                     
+                                            <div class="tab-pane show active" id="responsive-preview">
+                                                <div class="table-responsive">
+                                                    <table class="table mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                            <th scope="col">Age</th>
+                                                            <th scope="col">Sex</th>
+                                                            <th scope="col">trtbps</th>
+                                                            <th scope="col">cp</th>
+                                                            <th scope="col">chol</th>
+                                                            <th scope="col">fbs</th>
+                                                            <th scope="col">restecg</th>
+                                                            <th scope="col">thalachh</th>
+                                                            <th scope="col">exng</th>
+                                                            <th scope="col">oldpeak</th>
+                                                            <th scope="col">slp</th>
+                                                            <th scope="col">caa</th>
+                                                            <th scope="col">thall</th>
+                                                            <th scope="col">output</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php
+                                                                // Iterate over the fetched user data and populate table rows
+                                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                                    echo "<tr>";
+                                                                    echo "<td>{$row['age']}</td>";
+                                                                    echo "<td>{$row['sex']}</td>";
+                                                                    echo "<td>{$row['trtbps']}</td>";
+                                                                    echo "<td>{$row['cp']}</td>";
+                                                                    echo "<td>{$row['chol']}</td>";
+                                                                    echo "<td>{$row['fbs']}</td>";
+                                                                    echo "<td>{$row['restecg']}</td>";
+                                                                    echo "<td>{$row['thalachh']}</td>";
+                                                                    echo "<td>{$row['exng']}</td>";
+                                                                    echo "<td>{$row['oldpeak']}</td>";
+                                                                    echo "<td>{$row['slp']}</td>";
+                                                                    echo "<td>{$row['caa']}</td>";
+                                                                    echo "<td>{$row['thall']}</td>";
+                                                                    echo "<td>{$row['output']}</td>";
+                                                                    echo "<td>";                            
+                                                                    echo "</td>";
+                                                                    echo "</tr>";
+                                                                }
+                                                            ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div> <!-- end table-responsive-->                     
                                             </div> <!-- end preview-->
-                                        
-                                
                                         </div> <!-- end tab-content-->
 
                                     </div> <!-- end card body-->
                                 </div> <!-- end card -->
                             </div><!-- end col-->
-                        </div><!-- end row-->
+                        </div>
             </div>
         </div>
         <!-- END wrapper -->
@@ -355,7 +351,7 @@ mysqli_close($conn);
         <!-- /End-bar -->
 
 
-        <!-- bundle -->
+       <!-- bundle -->
         <script src="assets/js/vendor.min.js"></script>
         <script src="assets/js/app.min.js"></script>
 
@@ -373,14 +369,11 @@ mysqli_close($conn);
         <script src="assets/js/vendor/dataTables.select.min.js"></script>
         <script src="assets/js/vendor/fixedColumns.bootstrap5.min.js"></script>
         <script src="assets/js/vendor/fixedHeader.bootstrap5.min.js"></script>
-        
         <!-- third party js ends -->
 
         <!-- demo app -->
         <script src="assets/js/pages/demo.datatable-init.js"></script>
         <!-- end demo js-->
-
-    </body>
 
 <!-- Mirrored from coderthemes.com/hyper/saas/tables-datatable.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 29 Jul 2022 10:22:01 GMT -->
 </html>
