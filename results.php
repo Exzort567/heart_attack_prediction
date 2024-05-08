@@ -127,7 +127,7 @@ mysqli_close($conn);
                                                             <th scope="col">caa</th>
                                                             <th scope="col">thall</th>
                                                             <th scope="col">output</th>
-                                                            <th scope="col">action</th>
+                                                   
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -150,7 +150,7 @@ mysqli_close($conn);
                                                                     echo "<td>{$row['thall']}</td>";
                                                                     echo "<td>{$row['output']}</td>";
                                                                     echo "<td>";                
-                                                                    echo "<a href='edit_user.php?id={$row['user_id']}' class='btn btn-primary'>Edit</a>";            
+                                                                            
                                                                     echo "</td>";
                                                                     echo "</tr>";
                                                                 }
