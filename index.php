@@ -13,69 +13,65 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
    
 }
 
-// Fetch count of male individuals
-$sql_male_count = "SELECT COUNT(*) AS male_count FROM heart_attack WHERE Sex = '1'";
-$result_male_count = mysqli_query($conn, $sql_male_count);
-$row_male_count = mysqli_fetch_assoc($result_male_count);
-$maleCount = $row_male_count['male_count'];
-
-// Fetch count of female individuals
-$sql_female_count = "SELECT COUNT(*) AS female_count FROM heart_attack WHERE Sex = '0'";
-$result_female_count = mysqli_query($conn, $sql_female_count);
-$row_female_count = mysqli_fetch_assoc($result_female_count);
-$femaleCount = $row_female_count['female_count'];
-
-// Fetch data from the database for male
-$sql_male = "SELECT AVG(trtbps) AS avg_trtbps, AVG(cp) AS avg_cp, AVG(chol) AS avg_chol, AVG(fbs) AS avg_fbs, AVG(restecg) AS avg_restecg, AVG(thalachh) AS avg_thalachh, AVG(exng) AS avg_exng, AVG(oldpeak) AS avg_oldpeak, AVG(slp) AS avg_slp, AVG(caa) AS avg_caa, AVG(thall) AS avg_thall FROM heart_attack WHERE Sex = '1'";
-$result_male = mysqli_query($conn, $sql_male);
-
-// Fetch data from the database for female
-$sql_female = "SELECT AVG(trtbps) AS avg_trtbps, AVG(cp) AS avg_cp, AVG(chol) AS avg_chol, AVG(fbs) AS avg_fbs, AVG(restecg) AS avg_restecg, AVG(thalachh) AS avg_thalachh, AVG(exng) AS avg_exng, AVG(oldpeak) AS avg_oldpeak, AVG(slp) AS avg_slp, AVG(caa) AS avg_caa, AVG(thall) AS avg_thall FROM heart_attack WHERE Sex = '0'";
-$result_female = mysqli_query($conn, $sql_female);
-
-// Array to store column names
-$columns = ['trtbps', 'cp', 'chol', 'fbs', 'restecg', 'thalachh', 'exng', 'oldpeak', 'slp', 'caa', 'thall'];
-
-// Arrays to store average values for male and female
-$avg_male = [];
-$avg_female = [];
-
-// Fetch average values for male
-if (mysqli_num_rows($result_male) > 0) {
-    $row_male = mysqli_fetch_assoc($result_male);
-    foreach ($columns as $column) {
-        $avg_male[] = $row_male["avg_".$column];
-    }
-}
-
-// Fetch average values for female
-if (mysqli_num_rows($result_female) > 0) {
-    $row_female = mysqli_fetch_assoc($result_female);
-    foreach ($columns as $column) {
-        $avg_female[] = $row_female["avg_".$column];
-    }
-}
-
-// Fetch data from the database
-$sql = "SELECT Age, AVG(thalachh) AS avg_thalachh FROM heart_attack GROUP BY Age";
+// Fetch data from the database for ages and chol
+$sql = "SELECT * FROM heart_attack";
 $result = mysqli_query($conn, $sql);
 
-// Arrays to store age and average thalachh values
-$ageData = [];
-$averageThalachhData = [];
+// Initialize arrays to store data for each chart
+$ages = [];
+$chol = [];
+// Add more arrays for other columns if needed
 
-if (mysqli_num_rows($result) > 0) {
-    // Output data of each row
-    while($row = mysqli_fetch_assoc($result)) {
-        $ageData[] = $row["Age"];
-        $averageThalachhData[] = $row["avg_thalachh"];
-    }
+// Fetch data and populate arrays
+while ($row = mysqli_fetch_assoc($result)) {
+    $ages[] = $row['age'];
+    $chol[] = $row['chol'];
+    // Add more columns as needed
 }
-$modifiedLabels = [];
-foreach ($ageData as $index => $ageRange) {
- // Combine age range and average thalachh value
-    $modifiedLabels[] = 'Age: ' . $ageRange . ', Avg Thalachh: ' . $averageThalachhData[$index];
+
+// Fetch data from the database for sex and cp
+$sql = "SELECT * FROM heart_attack";
+$result = mysqli_query($conn, $sql);
+
+// Initialize arrays to store data for each chart
+$sexes = [];
+$chestPain = [];
+
+// Fetch data and populate arrays
+while ($row = mysqli_fetch_assoc($result)) {
+    $sexes[] = $row['sex'];
+    $chestPain[] = $row['cp'];
 }
+
+// Fetch data from the database for thalachh and oldpeak
+$sql = "SELECT * FROM heart_attack";
+$result = mysqli_query($conn, $sql);
+
+// Initialize arrays to store data for each chart
+$thalachh = [];
+$oldpeak = [];
+
+// Fetch data and populate arrays
+while ($row = mysqli_fetch_assoc($result)) {
+    $thalachh[] = $row['thalachh'];
+    $oldpeak[] = $row['oldpeak'];
+}
+
+// Fetch data from the database for thalachh and cp
+$sql = "SELECT * FROM heart_attack";
+$result = mysqli_query($conn, $sql);
+
+// Initialize arrays to store data for each chart
+$thalachh = [];
+$chestPain = [];
+
+// Fetch data and populate arrays
+while ($row = mysqli_fetch_assoc($result)) {
+    $thalachh[] = $row['thalachh'];
+    $chestPain[] = $row['cp'];
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -101,6 +97,7 @@ foreach ($ageData as $index => $ageRange) {
 
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 
 </head>
 
@@ -135,7 +132,7 @@ foreach ($ageData as $index => $ageRange) {
                             <div dir="ltr">
                                 <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
-                                    <canvas id="line-chart-example" data-colors="#727cf5,#0acf97"></canvas>
+                                    <canvas id="ageChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div> <!-- end card body-->
@@ -149,7 +146,7 @@ foreach ($ageData as $index => $ageRange) {
                             <div dir="ltr">
                                     <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
-                                    <canvas id="bar-chart-example" data-colors="#fa5c7c,#727cf5"></canvas>
+                                    <canvas id="cholChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div> <!-- end card body-->
@@ -166,7 +163,7 @@ foreach ($ageData as $index => $ageRange) {
                             <div dir="ltr">
                                 <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
-                                    <canvas id="donut-chart-example"></canvas>
+                                    <canvas id="sexChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div> <!-- end card body-->
@@ -176,11 +173,11 @@ foreach ($ageData as $index => $ageRange) {
                 <div class="col-xl-6">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title mb-4">Step Chart</h4>
+                            <h4 class="header-title mb-4">Line Chart</h4>
                             <div dir="ltr">
                                     <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
-                                    <canvas id="step-chart-example" data-colors="#fa5c7c,#727cf5"></canvas>
+                                    <canvas id="chestPainChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div> <!-- end card body-->
@@ -197,7 +194,7 @@ foreach ($ageData as $index => $ageRange) {
                             <div dir="ltr">
                                     <div class="mt-3 chartjs-chart" style="height: 400px; overflow-y: auto;">
                                     <!-- Canvas for the chart -->
-                                    <canvas id="bubble-chart-example" data-colors="#fa5c7c,#727cf5"></canvas>
+                                    <canvas id="bubbleChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div> <!-- end card body-->
@@ -307,208 +304,156 @@ foreach ($ageData as $index => $ageRange) {
     <!-- /End-bar -->
         <!-- JavaScript to render the line chart -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctxLine = document.getElementById('line-chart-example').getContext('2d');
-            var myLineChart = new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    // Labels for X-axis (Age)
-                    labels: <?php echo json_encode($ageData); ?>,
-                    datasets: [{
-                        label: 'Average thalachh',
-                        data: <?php echo json_encode($averageThalachhData); ?>,
-                        backgroundColor: 'rgba(114, 124, 245, 0.2)', // Color for the line fill
-                        borderColor: 'rgba(114, 124, 245, 1)', // Color for the line
-                        borderWidth: 2,
-                        pointRadius: 4,
-                        pointBackgroundColor: 'rgba(114, 124, 245, 1)', // Color for the points
-                        pointBorderColor: '#fff',
-                        pointHoverRadius: 5,
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(114, 124, 245, 1)'
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: false, // Change to true if you want the Y-axis to start from zero
-                            // Add label for Y-axis
-                            title: {
-                                display: true,
-                                text: 'Average thalachh'
-                            }
-                        },
-                        x: {
-                            // Add label for X-axis
-                            title: {
-                                display: true,
-                                text: 'Age'
-                            }
-                        }
-                    }
-                }
-            });
+        // Get data from PHP arrays
+        var agesData = <?php echo json_encode($ages); ?>;
+        var cholData = <?php echo json_encode($chol); ?>;
+        // Add more variables for other columns if needed
+
+        // Chart.js code to render charts
+        var ageCtx = document.getElementById('ageChart').getContext('2d');
+        var cholCtx = document.getElementById('cholChart').getContext('2d');
+        // Add more contexts for other charts if needed
+
+        var ageChart = new Chart(ageCtx, {
+            type: 'line',
+            data: {
+                labels: <?php echo json_encode(range(1, count($ages))); ?>,
+                datasets: [{
+                    label: 'Age',
+                    data: agesData,
+                    borderColor: 'blue',
+                    borderWidth: 1
+                }]
+            },
+            options: {}
         });
 
-        // JavaScript to render the bar chart
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctxBar = document.getElementById('bar-chart-example').getContext('2d');
-            var myBarChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    // Labels for X-axis (Gender)
-                    labels: ['Male', 'Female'],
-                    datasets: [{
-                        label: 'Average Resting Blood Pressure (trtbps)',
-                        // Data for Y-axis (Resting Blood Pressure)
-                        data: <?php echo json_encode([$avg_male[0], $avg_female[0]]); ?>,
-                        backgroundColor: ['rgba(114, 124, 245, 0.2)', 'rgba(245, 114, 124, 0.2)'], // Fill color for the bars
-                        borderColor: ['rgba(114, 124, 245, 1)', 'rgba(245, 114, 124, 1)'], // Border color for the bars
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true, // Start Y-axis from zero
-                            // Add label for Y-axis
-                            title: {
-                                display: true,
-                                text: 'Average Resting Blood Pressure (trtbps)'
-                            }
-                        },
-                        x: {
-                            // Add label for X-axis
-                            title: {
-                                display: true,
-                                text: 'Gender'
-                            }
-                        }
-                    }
-                }
-            });
+        var cholChart = new Chart(cholCtx, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode(range(1, count($chol))); ?>,
+                datasets: [{
+                    label: 'Cholesterol',
+                    data: cholData,
+                    backgroundColor: 'green'
+                }]
+            },
+            options: {}
         });
-       // JavaScript to render the donut chart
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctxDonut = document.getElementById('donut-chart-example').getContext('2d');
-            
-            var myDonutChart = new Chart(ctxDonut, {
-                
-                type: 'doughnut',
-                data: {
-                    // Labels for different categories (e.g., Age groups)
-                    labels: <?php echo json_encode($modifiedLabels); ?>,
-                    datasets: [{
-                        label: 'Donut Chart',
-                        // Data for each category (e.g., Average thalachh for each age group)
-                        data: <?php echo json_encode($averageThalachhData); ?>,
-                        backgroundColor: [
-                            // Specify different colors for each category as needed
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(153, 102, 255, 0.5)',
-                            'rgba(255, 159, 64, 0.5)'
-                        ],
-                        borderColor: [
-                            // Specify border colors corresponding to the background colors
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    cutout: '70%', // Adjust the size of the hole in the center of the doughnut
-                    plugins: {
+        // Get data from PHP arrays
+        var sexesData = <?php echo json_encode($sexes); ?>;
+        var chestPainData = <?php echo json_encode($chestPain); ?>;
+
+        // Chart.js code to render charts
+        var sexCtx = document.getElementById('sexChart').getContext('2d');
+        var chestPainCtx = document.getElementById('chestPainChart').getContext('2d');
+
+        var sexChart = new Chart(sexCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                    label: 'Sex',
+                    data: sexesData,
+                    backgroundColor: ['blue', 'pink']
+                }]
+            },
+            options: {}
+        });
+
+        var chestPainChart = new Chart(chestPainCtx, {
+            type: 'line',
+            data: {
+                labels: <?php echo json_encode(range(1, count($chestPain))); ?>,
+                datasets: [{
+                    label: 'Chest Pain Type',
+                    data: chestPainData,
+                    borderColor: 'red',
+                    borderWidth: 1
+                }]
+            },
+            options: {}
+        });
+        // Get data from PHP arrays
+        var thalachhData = <?php echo json_encode($thalachh); ?>;
+        var oldpeakData = <?php echo json_encode($oldpeak); ?>;
+
+        // Prepare data for bubble chart
+        var bubbleChartData = [];
+        for (var i = 0; i < thalachhData.length; i++) {
+            bubbleChartData.push({
+                x: thalachhData[i],
+                y: oldpeakData[i],
+                r: 10 // Set a fixed radius for all bubbles for simplicity
+            });
+        }
+
+        // Chart.js code to render bubble chart
+        var bubbleCtx = document.getElementById('bubbleChart').getContext('2d');
+
+        var bubbleChart = new Chart(bubbleCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Thalachh vs Oldpeak',
+                    data: bubbleChartData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
                         title: {
                             display: true,
-                            text: 'Donut'
+                            text: 'Maximum Heart Rate Achieved (Thalachh)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'ST Depression Induced by Exercise Relative to Rest (Oldpeak)'
                         }
                     }
                 }
-            });
+            }
         });
+        // Get data from PHP arrays
+        var thalachhData = <?php echo json_encode($thalachh); ?>;
+        var chestPainData = <?php echo json_encode($chestPain); ?>;
 
+        // Chart.js code to render radar chart
+        var radarCtx = document.getElementById('radarChart').getContext('2d');
 
-
-        // JavaScript to render the bubble chart
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctxBubble = document.getElementById('bubble-chart-example').getContext('2d');
-            var myBubbleChart = new Chart(ctxBubble, {
-                type: 'bubble',
-                data: {
-                    datasets: [{
-                        label: 'Bubble Chart',
-                        data: [
-                            {x: <?php echo $avg_male[0]; ?>, y: <?php echo $avg_female[0]; ?>, r: 10},
-                            // Add more data points as needed
-                        ],
-                        backgroundColor: 'rgba(114, 124, 245, 0.2)', // Fill color for bubbles
-                        borderColor: 'rgba(114, 124, 245, 1)', // Border color for bubbles
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Average trtbps (Male)'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Average trtbps (Female)'
-                            }
-                        }
+        var radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Thalachh', 'Chest Pain Type'],
+                datasets: [{
+                    label: 'Heart Parameters',
+                    data: [
+                        [thalachhData[0], chestPainData[0]],
+                        [thalachhData[1], chestPainData[1]],
+                        [thalachhData[2], chestPainData[2]],
+                        [thalachhData[3], chestPainData[3]]
+                    ],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        suggestedMin: 0,
+                        suggestedMax: 200
                     }
                 }
-            });
+            }
         });
 
-        // JavaScript to render the step chart
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctxStep = document.getElementById('step-chart-example').getContext('2d');
-            var myStepChart = new Chart(ctxStep, {
-                type: 'line',
-                data: {
-                    // Labels for X-axis (Gender)
-                    labels: ['Male', 'Female'],
-                    datasets: [{
-                        label: 'Average Resting Blood Pressure (trtbps)',
-                        // Data for Y-axis (Resting Blood Pressure)
-                        data: [<?php echo $avg_male[0]; ?>, <?php echo $avg_female[0]; ?>],
-                        fill: false,
-                        borderColor: 'rgba(114, 124, 245, 1)', // Color for the line
-                        borderWidth: 2,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Gender'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Average Resting Blood Pressure (trtbps)'
-                            }
-                        }
-                    }
-                }
-            });
-        });
+        
     </script>
 
 
